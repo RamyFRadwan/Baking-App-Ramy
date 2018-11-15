@@ -23,7 +23,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
     private final IngredientListItemClickListener ingredientListItemClickListener;
     private List<Ingredient> ingredients;
-
+    private Context context;
     public IngredientAdapter(IngredientListItemClickListener ingredientListItemClickListener) {
         this.ingredientListItemClickListener = ingredientListItemClickListener;
     }
@@ -31,7 +31,7 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
+        context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View rootView = layoutInflater.inflate(R.layout.ingredient_list_item, parent, false);
         return new ViewHolder(rootView);
@@ -70,7 +70,14 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         private void bind(@NonNull Ingredient ingredient) {
             int backgroundColor = getAdapterPosition() % 2 == 0 ? R.color.background1 : R.color.background2;
             layoutRoot.setBackgroundColor(ContextCompat.getColor(layoutRoot.getContext(), backgroundColor));
-            ingredientSummary.setText(ingredient.toString());
+            ingredientSummary.setText(
+                    new StringBuilder()
+                            .append(String.valueOf((((int) ingredient.getQuantity()))))
+                            .append("  ")
+                            .append(ingredient.getMeasure())
+                            .append(context.getString(R.string.line))
+                            .append(ingredient.getName())
+                            .toString());
         }
 
         @Override
