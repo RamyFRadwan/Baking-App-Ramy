@@ -24,10 +24,10 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
 import com.ramyfradwan.bakingapp.R;
+import com.ramyfradwan.bakingapp.adapters.RecipeAdapter;
 import com.ramyfradwan.bakingapp.api.RecipeAPIClient;
 import com.ramyfradwan.bakingapp.model.Recipe;
 import com.ramyfradwan.bakingapp.service.RecipeWidgetService;
-import com.ramyfradwan.bakingapp.adapters.RecipeAdapter;
 import com.ramyfradwan.bakingapp.util.DBUtil;
 import com.ramyfradwan.bakingapp.util.PreferenceUtil;
 import com.ramyfradwan.bakingapp.util.SimpleIdlingResource;
@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -118,6 +119,7 @@ public class RecipeActivity extends AppCompatActivity
         }
     }
 
+    @NonNull
     @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<Pair<List<Recipe>, Exception>> onCreateLoader(int id, Bundle args) {
@@ -150,7 +152,7 @@ public class RecipeActivity extends AppCompatActivity
 
     @SuppressLint("StaticFieldLeak")
     @Override
-    public void onLoadFinished(Loader<Pair<List<Recipe>, Exception>> loader, Pair<List<Recipe>, Exception> data) {
+    public void onLoadFinished(@NonNull Loader<Pair<List<Recipe>, Exception>> loader, Pair<List<Recipe>, Exception> data) {
         hideProgressBar();
         if (data != null) {
             if (data.second != null) {
@@ -158,7 +160,7 @@ public class RecipeActivity extends AppCompatActivity
             } else {
                 final List<Recipe> recipes = data.first;
                 recipeAdapter.swapData(recipes);
-                showMessage(getString(R.string.data_loaded, recipes.size()));
+                showMessage(getString(R.string.data_loaded, Objects.requireNonNull(recipes).size()));
 
                 // insert recipe with its ingredients and steps to DB
                 new AsyncTask<Void, Void, Void>() {
@@ -182,7 +184,7 @@ public class RecipeActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoaderReset(Loader<Pair<List<Recipe>, Exception>> loader) {
+    public void onLoaderReset(@NonNull Loader<Pair<List<Recipe>, Exception>> loader) {
 
     }
 

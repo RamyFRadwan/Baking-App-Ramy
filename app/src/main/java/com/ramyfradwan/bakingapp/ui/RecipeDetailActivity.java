@@ -1,13 +1,13 @@
 package com.ramyfradwan.bakingapp.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -16,6 +16,7 @@ import com.ramyfradwan.bakingapp.R;
 import com.ramyfradwan.bakingapp.model.Recipe;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -90,7 +91,7 @@ public class RecipeDetailActivity extends AppCompatActivity
         switch (id) {
             case android.R.id.home:
                 Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                if (NavUtils.shouldUpRecreateTask(this, Objects.requireNonNull(upIntent))) {
                     TaskStackBuilder.create(this)
                             .addNextIntentWithParentStack(upIntent)
                             .startActivities();

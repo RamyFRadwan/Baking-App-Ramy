@@ -34,9 +34,6 @@ public class RecipeDetailFragment extends Fragment
     @BindView(R.id.recyclerview_step)
     RecyclerView stepRecyclerView;
 
-    private IngredientAdapter ingredientAdapter;
-    private StepAdapter stepAdapter;
-
     private Unbinder unbinder;
 
     private Recipe recipe;
@@ -59,7 +56,7 @@ public class RecipeDetailFragment extends Fragment
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
@@ -70,13 +67,13 @@ public class RecipeDetailFragment extends Fragment
         ingredientRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         ingredientRecyclerView.setHasFixedSize(true);
         ingredientRecyclerView.setNestedScrollingEnabled(false);
-        ingredientAdapter = new IngredientAdapter(this);
+        IngredientAdapter ingredientAdapter = new IngredientAdapter(this);
         ingredientRecyclerView.setAdapter(ingredientAdapter);
 
         stepRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         stepRecyclerView.setHasFixedSize(true);
         stepRecyclerView.setNestedScrollingEnabled(false);
-        stepAdapter = new StepAdapter(this);
+        StepAdapter stepAdapter = new StepAdapter(this);
         stepRecyclerView.setAdapter(stepAdapter);
 
         if (savedInstanceState != null) {
@@ -92,7 +89,7 @@ public class RecipeDetailFragment extends Fragment
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(RECIPE, recipe);
     }

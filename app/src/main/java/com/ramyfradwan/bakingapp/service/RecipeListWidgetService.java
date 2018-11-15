@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.ramyfradwan.bakingapp.ui.RecipeActivity;
 import com.ramyfradwan.bakingapp.R;
 import com.ramyfradwan.bakingapp.model.Recipe;
+import com.ramyfradwan.bakingapp.ui.RecipeActivity;
 import com.ramyfradwan.bakingapp.util.DBUtil;
 import com.ramyfradwan.bakingapp.util.PreferenceUtil;
 
@@ -22,10 +22,10 @@ public class RecipeListWidgetService extends RemoteViewsService {
 
 class RecipeListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    Context mContext;
-    List<Recipe> recipes;
+    private Context mContext;
+    private List<Recipe> recipes;
 
-    public RecipeListRemoteViewsFactory(Context applicationContext) {
+    RecipeListRemoteViewsFactory(Context applicationContext) {
         mContext = applicationContext;
     }
 
@@ -58,8 +58,6 @@ class RecipeListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFact
         views.setTextViewText(R.id.textview_ingredient_summary, recipe.getName());
 
         // Fill in the onClick PendingIntent Template using the specific plant Id for each item individually
-        //Bundle extras = new Bundle();
-        //extras.putParcelable(RecipeActivity.EXTRA_RECIPE, recipe);
         Intent fillInIntent = new Intent();
         fillInIntent.putExtra(RecipeActivity.EXTRA_RECIPE, recipe);
         views.setOnClickFillInIntent(R.id.textview_ingredient_summary, fillInIntent);

@@ -12,7 +12,7 @@
         android:layout_height="@dimen/ingredient_icon_size"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:paddingLeft="@dimen/padding_16dp"
+        android:paddingStart="@dimen/padding_16dp"
         android:background="@drawable/ic_ingredients"
 
         />

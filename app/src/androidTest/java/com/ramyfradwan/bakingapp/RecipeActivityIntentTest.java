@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 public class RecipeActivityIntentTest {
     @Rule
-    public IntentsTestRule<RecipeActivity> mActivityTestRule = new IntentsTestRule<RecipeActivity>(RecipeActivity.class);
+    public IntentsTestRule<RecipeActivity> mActivityTestRule = new IntentsTestRule<>(RecipeActivity.class);
 
     private IdlingResource mIdlingResource;
 

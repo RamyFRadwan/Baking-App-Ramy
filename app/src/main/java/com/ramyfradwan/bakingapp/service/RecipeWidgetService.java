@@ -10,9 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.ramyfradwan.bakingapp.R;
-import com.ramyfradwan.bakingapp.ui.RecipeWidgetProvider;
 import com.ramyfradwan.bakingapp.database.RecipeProvider;
 import com.ramyfradwan.bakingapp.model.WidgetType;
+import com.ramyfradwan.bakingapp.ui.RecipeWidgetProvider;
 import com.ramyfradwan.bakingapp.util.PreferenceUtil;
 
 public class RecipeWidgetService extends IntentService {
@@ -37,29 +37,20 @@ public class RecipeWidgetService extends IntentService {
             int selectedRecipeId = PreferenceUtil.getSelectedRecipeId(this);
             if (selectedRecipeId == PreferenceUtil.NO_ID) {
                 // get recipes
-                Cursor cursor = getContentResolver().query(
+
+                boolean isRecipesExist;
+
+                try (Cursor cursor = getContentResolver().query(
                         RecipeProvider.Recipes.RECIPES,
                         null,
                         null,
                         null,
                         null
-                );
-
-                boolean isRecipesExist;
-
-                try {
-                    if (cursor != null && cursor.getCount() > 0) {
-                        isRecipesExist = true;
-                    } else {
-                        isRecipesExist = false;
-                    }
+                )) {
+                    isRecipesExist = cursor != null && cursor.getCount() > 0;
                 } catch (Exception ex) {
                     isRecipesExist = false;
                     ex.printStackTrace();
-                } finally {
-                    if (cursor != null) {
-                        cursor.close();
-                    }
                 }
 
                 type = isRecipesExist ? WidgetType.RECIPES : WidgetType.NONE;

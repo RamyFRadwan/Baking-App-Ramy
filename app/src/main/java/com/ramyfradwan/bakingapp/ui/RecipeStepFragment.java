@@ -4,6 +4,7 @@ package com.ramyfradwan.bakingapp.ui;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageView;
@@ -14,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.ramyfradwan.bakingapp.R;
-import com.ramyfradwan.bakingapp.model.Step;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -33,7 +32,11 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.ramyfradwan.bakingapp.R;
+import com.ramyfradwan.bakingapp.model.Step;
 import com.squareup.picasso.Picasso;
+
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,7 +44,7 @@ import butterknife.OnClick;
 import butterknife.Optional;
 import butterknife.Unbinder;
 
-public class RecipeStepFragment extends Fragment implements ExoPlayer.EventListener{
+public class RecipeStepFragment extends Fragment implements ExoPlayer.EventListener {
 
     private static final String EXTRA_LIST_INDEX = "extra_list_index";
     private static final String EXTRA_STEP = "extra_step";
@@ -103,13 +106,13 @@ public class RecipeStepFragment extends Fragment implements ExoPlayer.EventListe
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(EXTRA_LIST_INDEX, listIndex);
         outState.putParcelable(EXTRA_STEP, step);
         outState.putBoolean(EXTRA_PREV_ENABLED, isPrevEnabled);
         outState.putBoolean(EXTRA_NEXT_ENABLED, isNextEnabled);
-        outState.putLong(EXTRA_EXO_PLAYER_POSITION,position);
+        outState.putLong(EXTRA_EXO_PLAYER_POSITION, position);
     }
 
     @Override
@@ -123,25 +126,24 @@ public class RecipeStepFragment extends Fragment implements ExoPlayer.EventListe
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recipe_step, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         if (view.findViewById(R.id.textview_step_count) != null) {
-            stepCount.setText(getString(R.string.step_count, listIndex));
-            shortDescription.setText(step.getShortDescription());
-            longDescription.setText(step.getDescription());
-            prevButton.setEnabled(isPrevEnabled);
-            nextButton.setEnabled(isNextEnabled);
+            Objects.requireNonNull(stepCount).setText(getString(R.string.step_count, listIndex));
+            Objects.requireNonNull(shortDescription).setText(step.getShortDescription());
+            Objects.requireNonNull(longDescription).setText(step.getDescription());
+            Objects.requireNonNull(prevButton).setEnabled(isPrevEnabled);
+            Objects.requireNonNull(nextButton).setEnabled(isNextEnabled);
         }
 
         if (!TextUtils.isEmpty(step.getVideoURL())) {
             noVideoImage.setVisibility(View.GONE);
             initializePlayer(Uri.parse(step.getVideoURL()));
-        }
-        else {
+        } else {
             playerView.setVisibility(View.GONE);
             if (!TextUtils.isEmpty(step.getThumbnailURL())) {
                 try {
@@ -194,7 +196,7 @@ public class RecipeStepFragment extends Fragment implements ExoPlayer.EventListe
             // Prepare the MediaSource.
             String userAgent = Util.getUserAgent(getActivity(), getString(R.string.app_name));
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
+                    Objects.requireNonNull(getActivity()), userAgent), new DefaultExtractorsFactory(), null, null);
             exoPlayer.prepare(mediaSource);
             exoPlayer.setPlayWhenReady(true);
 

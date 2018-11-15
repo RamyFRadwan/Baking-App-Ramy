@@ -25,8 +25,9 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
         this.stepListItemClickListener = stepListItemClickListener;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View rootView = layoutInflater.inflate(R.layout.step_list_item, parent, false);
@@ -34,7 +35,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Step step = steps.get(position);
         holder.bind(step);
     }
@@ -67,7 +68,7 @@ public class StepAdapter extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
         }
 
-        public void bind(@NonNull Step step) {
+        void bind(@NonNull Step step) {
             stepCount.setText(stepCount.getContext().getString(R.string.step_count, getAdapterPosition()));
             shortDescription.setText(step.getShortDescription());
         }

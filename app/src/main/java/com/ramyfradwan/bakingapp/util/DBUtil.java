@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.ramyfradwan.bakingapp.database.IngredientColumns;
 import com.ramyfradwan.bakingapp.database.RecipeColumns;
@@ -19,21 +18,23 @@ import com.ramyfradwan.bakingapp.model.Step;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 
 public class DBUtil {
 
     private static final String TAG = DBUtil.class.getSimpleName();
 
-    public static int deleteAllRecipes(@NonNull ContentResolver contentResolver) {
-        return contentResolver.delete(RecipeProvider.Recipes.RECIPES, null, null);
+    public static void deleteAllRecipes(@NonNull ContentResolver contentResolver) {
+        contentResolver.delete(RecipeProvider.Recipes.RECIPES, null, null);
     }
 
-    public static int deleteAllIngredients(@NonNull ContentResolver contentResolver) {
-        return contentResolver.delete(RecipeProvider.Ingredients.INGREDIENTS, null, null);
+    public static void deleteAllIngredients(@NonNull ContentResolver contentResolver) {
+        contentResolver.delete(RecipeProvider.Ingredients.INGREDIENTS, null, null);
     }
 
-    public static int deleteAllSteps(@NonNull ContentResolver contentResolver) {
-        return contentResolver.delete(RecipeProvider.Steps.STEPS, null, null);
+    public static void deleteAllSteps(@NonNull ContentResolver contentResolver) {
+        contentResolver.delete(RecipeProvider.Steps.STEPS, null, null);
     }
 
     private static ContentValues createContentValues(@NonNull Recipe recipe) {
@@ -71,7 +72,7 @@ public class DBUtil {
         return contentResolver.insert(RecipeProvider.Recipes.RECIPES, contentValues);
     }
 
-    public static int insertRecipes(@NonNull ContentResolver contentResolver, @NonNull List<Recipe> recipes) {
+    public static void insertRecipes(@NonNull ContentResolver contentResolver, @NonNull List<Recipe> recipes) {
         ContentValues[] contentValues = new ContentValues[recipes.size()];
 
         for (int i = 0; i < recipes.size(); i++) {
@@ -80,7 +81,7 @@ public class DBUtil {
             contentValues[i] = cv;
         }
 
-        return contentResolver.bulkInsert(RecipeProvider.Recipes.RECIPES, contentValues);
+        contentResolver.bulkInsert(RecipeProvider.Recipes.RECIPES, contentValues);
     }
 
     @Nullable
@@ -90,15 +91,13 @@ public class DBUtil {
 
         Recipe recipe = null;
 
-        Cursor cursor = contentResolver.query(
+        try (Cursor cursor = contentResolver.query(
                 RecipeProvider.Recipes.RECIPES,
                 null,
                 selection,
                 selectionArgs,
                 null
-        );
-
-        try {
+        )) {
             if (cursor != null && cursor.getCount() > 0) {
                 cursor.moveToFirst();
 
@@ -116,12 +115,8 @@ public class DBUtil {
                 recipe.setImage(cursor.getString(imageIndex));
             }
         } catch (Exception ex) {
-            Log.e(TAG, "getRecipe: " + ex);
+            Timber.e(ex);
             ex.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
 
         if (recipe != null) {
@@ -140,17 +135,15 @@ public class DBUtil {
     public static List<Recipe> getRecipes(@NonNull ContentResolver contentResolver) {
         String[] projection = {RecipeColumns.RECIPE_ID};
 
-        Cursor cursor = contentResolver.query(
+        List<Integer> recipeIds = null;
+
+        try (Cursor cursor = contentResolver.query(
                 RecipeProvider.Recipes.RECIPES,
                 projection,
                 null,
                 null,
                 null
-        );
-
-        List<Integer> recipeIds = null;
-
-        try {
+        )) {
             if (cursor != null && cursor.getCount() > 0) {
                 recipeIds = new ArrayList<>();
 
@@ -161,14 +154,8 @@ public class DBUtil {
                     recipeIds.add(id);
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
-        }
-        finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
 
         List<Recipe> recipes = null;
@@ -186,7 +173,7 @@ public class DBUtil {
         return recipes;
     }
 
-    public static int insertIngredients(@NonNull ContentResolver contentResolver, @NonNull List<Ingredient> ingredients, int recipeId) {
+    public static void insertIngredients(@NonNull ContentResolver contentResolver, @NonNull List<Ingredient> ingredients, int recipeId) {
         ContentValues[] contentValues = new ContentValues[ingredients.size()];
 
         for (int i = 0; i < ingredients.size(); i++) {
@@ -195,18 +182,17 @@ public class DBUtil {
             contentValues[i] = cv;
         }
 
-        return contentResolver.bulkInsert(RecipeProvider.Ingredients.INGREDIENTS, contentValues);
+        contentResolver.bulkInsert(RecipeProvider.Ingredients.INGREDIENTS, contentValues);
     }
 
     @Nullable
-    public static List<Ingredient> getIngredients(@NonNull ContentResolver contentResolver, int recipeId) {
+    private static List<Ingredient> getIngredients(@NonNull ContentResolver contentResolver, int recipeId) {
         String selection = IngredientColumns.RECIPE_ID + " = ?";
         String[] selectionArgs = {String.valueOf(recipeId)};
-        Cursor cursor = contentResolver.query(RecipeProvider.Ingredients.INGREDIENTS, null, selection, selectionArgs, null);
 
         List<Ingredient> ingredients = null;
 
-        try {
+        try (Cursor cursor = contentResolver.query(RecipeProvider.Ingredients.INGREDIENTS, null, selection, selectionArgs, null)) {
             if (cursor != null && cursor.getCount() > 0) {
 
                 int quantityIndex = cursor.getColumnIndex(IngredientColumns.QUANTITY);
@@ -227,16 +213,12 @@ public class DBUtil {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
 
         return ingredients;
     }
 
-    public static int insertSteps(@NonNull ContentResolver contentResolver, @NonNull List<Step> steps, int recipeId) {
+    public static void insertSteps(@NonNull ContentResolver contentResolver, @NonNull List<Step> steps, int recipeId) {
         ContentValues[] contentValues = new ContentValues[steps.size()];
 
         for (int i = 0; i < steps.size(); i++) {
@@ -245,19 +227,18 @@ public class DBUtil {
             contentValues[i] = cv;
         }
 
-        return contentResolver.bulkInsert(RecipeProvider.Steps.STEPS, contentValues);
+        contentResolver.bulkInsert(RecipeProvider.Steps.STEPS, contentValues);
     }
 
     @Nullable
-    public static List<Step> getSteps(@NonNull ContentResolver contentResolver, int recipeId) {
+    private static List<Step> getSteps(@NonNull ContentResolver contentResolver, int recipeId) {
         String selection = StepColumns.RECIPE_ID + " = ?";
         String[] selectionArgs = {String.valueOf(recipeId)};
         String sortOrder = StepColumns.ORDER;
-        Cursor cursor = contentResolver.query(RecipeProvider.Steps.STEPS, null, selection, selectionArgs, sortOrder);
 
         List<Step> steps = null;
 
-        try {
+        try (Cursor cursor = contentResolver.query(RecipeProvider.Steps.STEPS, null, selection, selectionArgs, sortOrder)) {
             if (cursor != null && cursor.getCount() > 0) {
                 int idIndex = cursor.getColumnIndex(StepColumns.ID);
                 int stepIdIndex = cursor.getColumnIndex(StepColumns.STEP_ID);
@@ -283,10 +264,6 @@ public class DBUtil {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
 
         return steps;

@@ -14,9 +14,9 @@ import net.simonvt.schematic.annotation.TableEndpoint;
 )
 public class RecipeProvider {
 
-    public static final String AUTHORITY = "com.ramyfradwan.database.provider";
+    static final String AUTHORITY = "com.ramyfradwan.database.provider";
 
-    static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     interface Path {
         String INGREDIENTS = "ingredients";
